@@ -7,7 +7,7 @@ set -e
 npm run build
 
 # rename dist dir
-rm -r docs
+# rm -r docs
 mv dist docs
 
 # Sends to Github
