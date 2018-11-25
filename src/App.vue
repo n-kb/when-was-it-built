@@ -75,7 +75,7 @@ export default {
         // Creates room
         this.userName = userName
         this.showNamePrompt = false
-        if (this.newGame) this.createRoom()
+        this.createRoom()
       } else {
         // Joins room
         this.newGame = false
@@ -88,6 +88,7 @@ export default {
       this.showCreateRoom = true
     },
     play(gameStart) {
+      this.userName = gameStart.userName
       this.opponentName = gameStart.opponentName
       this.building = gameStart.building
       this.roomName = gameStart.roomName

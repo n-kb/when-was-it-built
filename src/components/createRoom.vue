@@ -42,7 +42,7 @@
           this.building = response.building
           var self = this
           setTimeout(function(){
-            self.$emit('gameReady', {opponentName: self.opponentName, building: self.building, roomName: self.roomName})
+            self.$emit('gameReady', {userName: self.userName, opponentName: self.opponentName, building: self.building, roomName: self.roomName})
           }, 200)
         }
       }

@@ -17,6 +17,7 @@
     name: 'namePrompt',
     data () {
       return {
+
       }
     },
     props: {
@@ -52,7 +53,7 @@
           var response = JSON.parse(data.data)
           if (response.hasOwnProperty("playerName")) {
             var opponentName = response.playerName
-            this.$emit('gameReady', {opponentName: opponentName, building: response.building, roomName: this.roomName})
+            this.$emit('gameReady', {userName: this.userName, opponentName: opponentName, building: response.building, roomName: this.roomName})
           }
         }
       }

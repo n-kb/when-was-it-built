@@ -83,6 +83,7 @@ export default {
   },
   methods: {
     submitAnswer() {
+      console.log(this.userName)
       this.$socket.sendObj({username: this.userName, roomName: this.roomName, answer: this.answer, building_id: this.currentBuilding.id, round: this.round})
       this.answerSubmitted = true
     },
@@ -115,6 +116,7 @@ export default {
       var response = JSON.parse(data.data)
         if (response.hasOwnProperty("round_summary")) {
           // updates the scores
+          console.log(response.round_summary)
           this.scores.round.user = response.round_summary[this.userName].points
           this.scores.round.opponent = response.round_summary[this.opponentName].points
           this.scores.total.user += this.scores.round.user

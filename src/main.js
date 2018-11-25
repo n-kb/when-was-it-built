@@ -4,7 +4,9 @@ import VueNativeSock from 'vue-native-websocket'
 
 Vue.config.productionTip = false
 
-Vue.use(VueNativeSock, 'wss://when-was-it-built.herokuapp.com', { format: 'json' })
+var ws_url = process.env.NODE_ENV === 'production' ? 'wss://when-was-it-built.herokuapp.com' : 'ws:localhost:3000'
+
+Vue.use(VueNativeSock, ws_url, { format: 'json' })
 
 new Vue({
   render: h => h(App),
