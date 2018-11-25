@@ -34,7 +34,7 @@ export default {
   data () {
       return {
           countdown: 5,
-          MAX_ROUNDS: 3
+          MAX_ROUNDS: 11
       }
   },
   mounted () {
