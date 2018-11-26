@@ -19,7 +19,7 @@
 
       <div class="hero-foot">
         <p class="has-text-centered is-size-7">
-            Made with 💙 by Nicolas Kayser-Bril.
+            Made with 💙 by <a href="http://nkb.fr" target="_blank">Nicolas Kayser-Bril</a> with data from the University of Washington's <a href="https://content.lib.washington.edu/buildingsweb/index.html" target="_blank">Cities and Buildings Database</a>.
         </p>
       </div>
     </section>
