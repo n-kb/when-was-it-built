@@ -24,7 +24,7 @@
                 <span class="tag is-link is-size-6">Next question in {{ countdown }} seconds!</span>
             </div>
             <div class="has-text-centered" v-else>
-                <p><a class="tag is-link is-size-7">New game starts in {{ countdown }} seconds!</a></p>
+                <p><span class="tag is-link is-size-7">New game starts in {{ countdown_newGame }} seconds!</span></p>
             </div>
         </section>
     </div>
@@ -37,23 +37,34 @@ export default {
   data () {
       return {
           countdown: 5,
+          countdown_newGame: process.env.NODE_ENV === 'production' ? 10 : 5,
           MAX_ROUNDS: process.env.NODE_ENV === 'production' ? 10 : 2
       }
   },
+  methods: {
+  	newGame() {
+		var self = this
+		setInterval(function(){
+		self.countdown_newGame -= 1
+			if (self.countdown_newGame == 0) {
+				self.$emit('newGame')
+			}
+		}, 1000)
+  	}
+  },
   mounted () {
       if (this.round == this.MAX_ROUNDS + 1) {
-        this.countdown = 10
+        this.newGame()
+      } else {
+	      var self = this
+	      setInterval(function(){
+	        self.countdown -= 1
+	        if (self.countdown == 0 && self.round < self.MAX_ROUNDS + 1) {
+	            // Resume game after countdown is over
+	            self.$emit('engage')
+	        }
+	      }, 1000)
       }
-      var self = this
-      setInterval(function(){
-        self.countdown -= 1
-        if (self.countdown == 0 && self.round < self.MAX_ROUNDS + 1) {
-            // Resume game after countdown is over
-            self.$emit('engage')
-        } else if (self.countdown == 0) {
-            self.$emit('newGame')
-        }
-      }, 1000)
   },
   computed: {
       resultSentence() {
