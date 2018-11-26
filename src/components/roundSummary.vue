@@ -3,6 +3,9 @@
     <div class="modal-background"></div>
     <div class="modal-card">
         <section class="modal-card-body content">
+          <h3 class="has-text-centered">
+            Round {{ roundDisplayed }} of {{ MAX_ROUNDS }}
+          </h3>
             <div class="has-text-centered">
                 {{ correctAnswer[2] }} was built between <strong>{{ correctAnswer[0] }}</strong> and <strong>{{ correctAnswer[1] }}</strong>.
             </div>
@@ -14,14 +17,14 @@
                     {{ opponent.name }} scored <br/><strong>{{ opponent.score }}</strong> points!
                 </div>
             </div>
-            <div class="has-text-centered" v-if="round == MAX_ROUNDS">
-                <p>{{ resultSentence }}</p>
+            <div class="has-text-centered resultSentence" v-if="round == MAX_ROUNDS + 1">
+                <p><span class="tag is-info is-size-6">{{ resultSentence }}</span></p>
             </div>
-            <div class="has-text-centered" v-if="round < MAX_ROUNDS">
-                <span class="tag is-info is-size-6">Next question in {{ countdown }} seconds!</span>
+            <div class="has-text-centered" v-if="round < MAX_ROUNDS + 1">
+                <span class="tag is-link is-size-6">Next question in {{ countdown }} seconds!</span>
             </div>
             <div class="has-text-centered" v-else>
-                <a class="button is-info" @click="$emit('newGame')">Start new game</a>
+                <p><a class="tag is-link is-size-7">New game starts in {{ countdown }} seconds!</a></p>
             </div>
         </section>
     </div>
@@ -34,22 +37,30 @@ export default {
   data () {
       return {
           countdown: 5,
-          MAX_ROUNDS: 11
+          MAX_ROUNDS: process.env.NODE_ENV === 'production' ? 10 : 2
       }
   },
   mounted () {
+      if (this.round == this.MAX_ROUNDS + 1) {
+        this.countdown = 10
+      }
       var self = this
       setInterval(function(){
         self.countdown -= 1
-        if (self.countdown == 0 && self.round < self.MAX_ROUNDS) {
+        if (self.countdown == 0 && self.round < self.MAX_ROUNDS + 1) {
             // Resume game after countdown is over
             self.$emit('engage')
+        } else if (self.countdown == 0) {
+            self.$emit('newGame')
         }
       }, 1000)
   },
   computed: {
       resultSentence() {
-          return (this.scores.total.user > this.scores.total.opponent) ? "Congratulations, you won!" : "You lost, try harder!"
+          return (this.scores.total.user >= this.scores.total.opponent) ? "🏆 Congratulations, you won! 🏆" : "😭 You lost, try harder! 😭"
+      },
+      roundDisplayed() {
+      	return this.round - 1 <= this.MAX_ROUNDS ? this.round - 1 : this.MAX_ROUNDS
       }
   },
   props: {
@@ -85,4 +96,6 @@ export default {
 </script>
 
 <style lang="sass">
+.resultSentence
+	margin-bottom: 1em
 </style>

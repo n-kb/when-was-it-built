@@ -22,7 +22,9 @@
           </div>
         </div>
       </div>
-      <img class="main-img" :src="imageSrc"/>
+      <div class="hero-body main-img" :style="{'background-image': `url(${imageSrc})`}">
+
+      </div>
       <div class="hero-footer footer-question">
         <div class="container content" v-if="answerSubmitted">
           <p>Waiting for {{ opponentName }}'s answer...</p>
@@ -30,11 +32,21 @@
         <div class="container content" v-else>
           <p class="is-size-7"><strong>{{ currentBuilding.name }}</strong> ({{ currentBuilding.city }}, {{ currentBuilding.country }}). When was it build?</p>
           <div class="field has-addons">
+            <p class="control">
+              <a class="button" :class="{ 'is-info': !isCurrentEra }" @click="isCurrentEra=false">
+                <span class="is-size-7">BCE</span>
+              </a>
+            </p>
+            <p class="control">
+              <a class="button" :class="{ 'is-info': isCurrentEra }" @click="isCurrentEra=true">
+                <span class="is-size-7">CE</span>
+              </a>
+            </p>
             <div class="control">
-              <input class="input" type="number" placeholder="Date here" v-model="answer">
+              <input class="input" type="number" placeholder="Date here" v-model="typed_answer" min="1" max="5000">
             </div>
             <div class="control">
-              <a class="button is-info" @click="submitAnswer()">
+              <a class="button is-primary" @click="submitAnswer()">
                 Next
               </a>
             </div>
@@ -47,6 +59,10 @@
 
 <script>
 import roundSummary from './roundSummary.vue'
+
+// 25 seconds per question
+const COUNTDOWN = process.env.NODE_ENV === 'production' ? 25 : 6
+
 export default {
   name: 'game',
   components: {
@@ -68,8 +84,9 @@ export default {
       correctAnswer: [],
       show_roundSummary: false,
       answerSubmitted: false,
-      countdown: 15,
-      answer: 2002,
+      countdown: COUNTDOWN,
+      isCurrentEra: true,
+      typed_answer: 2002,
       round: 1
     }
   },
@@ -79,19 +96,24 @@ export default {
     },
     opponent () {
       return { name: this.opponentName, score: this.scores.round.opponent }
+    },
+    answer () {
+      // If answer is before current era, return negative year
+      return this.isCurrentEra ? this.typed_answer : -this.typed_answer
     }
   },
   methods: {
     submitAnswer() {
-      console.log(this.userName)
       this.$socket.sendObj({username: this.userName, roomName: this.roomName, answer: this.answer, building_id: this.currentBuilding.id, round: this.round})
       this.answerSubmitted = true
     },
     resumeGame() {
       this.show_roundSummary = false
-      this.countdown = 15
+      this.countdown = COUNTDOWN
     },
     newGame() {
+      // Tells server to empty the rounds
+      this.$socket.sendObj({newGame: true, lastRound:this.round, roomName: this.roomName})
       this.resumeGame()
       this.round = 1
       this.scores.round.user = 0
@@ -116,7 +138,6 @@ export default {
       var response = JSON.parse(data.data)
         if (response.hasOwnProperty("round_summary")) {
           // updates the scores
-          console.log(response.round_summary)
           this.scores.round.user = response.round_summary[this.userName].points
           this.scores.round.opponent = response.round_summary[this.opponentName].points
           this.scores.total.user += this.scores.round.user
@@ -158,12 +179,8 @@ export default {
 
 <style lang="sass">
 .main-img
-  min-width: 100%
-  min-height: 100%
-  z-index: -1
-  top: 0
-  left: 0
-  position: fixed
+  background-position: center
+  background-repeat: no-repeat
 
 .header-score
   background: #FFF

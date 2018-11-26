@@ -35,7 +35,7 @@
         return this.newGame ? "Create game" : "Start game"
       },
       userName () {
-      	return this.makeName()
+        return this.makeName()
       }
     },
     methods: {
