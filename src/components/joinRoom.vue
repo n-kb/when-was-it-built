@@ -7,7 +7,7 @@
       </div>
     </div>
     <p class="has-text-centered">
-      <a class="button" @click="$emit('roomChosen', roomName)">Join room</a>
+      <a class="button" @click="$emit('roomChosen', roomName.toLowerCase().trim())">Join room</a>
     </p>
   </div>
 </template>
