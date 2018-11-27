@@ -12,7 +12,8 @@
     "node-sass": "^4.10.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.17",
-    "vue-native-websocket": "^2.0.12"
+    "vue-native-websocket": "^2.0.12",
+    "vue-slider-component": "^2.8.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.3",

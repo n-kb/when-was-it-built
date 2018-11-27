@@ -6,6 +6,7 @@
       :scores="scores" 
       :opponent="opponent"
       :round="round"
+      :answer="answer"
       v-on:engage="resumeGame()"
       v-on:newGame="newGame()"/>
     <section class="hero is-fullheight">
@@ -31,7 +32,14 @@
         </div>
         <div class="container content" v-else>
           <p class="is-size-7"><strong>{{ currentBuilding.name }}</strong> ({{ currentBuilding.city }}, {{ currentBuilding.country }}). When was it build?</p>
-          <div class="field has-addons">
+          
+          <vue-slider 
+            class="slider"
+            ref="slider" 
+            v-bind="slider_options"
+            v-model="answer" >
+          </vue-slider>
+          <!-- <div class="field has-addons">
             <p class="control">
               <a class="button" :class="{ 'is-info': !isCurrentEra }" @click="isCurrentEra=false">
                 <span class="is-size-7">BCE</span>
@@ -50,7 +58,7 @@
                 Next
               </a>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </section>
@@ -59,14 +67,14 @@
 
 <script>
 import roundSummary from './roundSummary.vue'
-
+import vueSlider from 'vue-slider-component'
 // 25 seconds per question
 const COUNTDOWN = process.env.NODE_ENV === 'production' ? 25 : 6
 
 export default {
   name: 'game',
   components: {
-    roundSummary
+    roundSummary, vueSlider
   },
   data () {
     return {
@@ -87,7 +95,15 @@ export default {
       countdown: COUNTDOWN,
       isCurrentEra: true,
       typed_answer: 2002,
-      round: 1
+      answer: 2000,
+      round: 1,
+      slider_options: {
+        formatter:this.formatter,
+        min: -600,
+        max:2019,
+        'tooltip-style':{'background-color': '#2d616f', 'border-color': '#2d616f'},
+        'process-style':{'background-color': '#2d616f'}
+      }
     }
   },
   computed: {
@@ -96,30 +112,32 @@ export default {
     },
     opponent () {
       return { name: this.opponentName, score: this.scores.round.opponent }
-    },
-    answer () {
-      // If answer is before current era, return negative year
-      return this.isCurrentEra ? this.typed_answer : -this.typed_answer
     }
   },
   methods: {
+    formatter(v) {
+      return v > 0 ? v + " CE" : (v * -1) + " BCE"
+    },
     submitAnswer() {
-      this.$socket.sendObj({username: this.userName, roomName: this.roomName, answer: this.answer, building_id: this.currentBuilding.id, round: this.round})
-      this.answerSubmitted = true
+      if (this.answerSubmitted == false) {
+        this.$socket.sendObj({username: this.userName, roomName: this.roomName, answer: this.answer, building_id: this.currentBuilding.id, round: this.round})
+        this.answerSubmitted = true
+      }
     },
     resumeGame() {
       this.show_roundSummary = false
+      this.answerSubmitted = false
       this.countdown = COUNTDOWN
     },
     newGame() {
       // Tells server to empty the rounds
-      this.$socket.sendObj({newGame: true, lastRound:this.round, roomName: this.roomName})
-      this.resumeGame()
+      this.$socket.sendObj({newGame: true, roomName: this.roomName})
       this.round = 1
       this.scores.round.user = 0
       this.scores.round.opponent = 0
       this.scores.total.user = 0
       this.scores.total.opponent = 0
+      this.resumeGame()
     }
   },
   mounted () {
@@ -148,7 +166,6 @@ export default {
           this.show_roundSummary = true
           // Loads the next question
           this.currentBuilding = response.building
-          this.answerSubmitted = false
           // Increments round
           this.round++
         }

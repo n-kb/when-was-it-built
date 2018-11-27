@@ -11,7 +11,7 @@
             </div>
             <div class="columns is-mobile section">
                 <div class="column has-text-centered">
-                    You scored <br/><strong>{{ scores.round.user }}</strong> points!
+                    You guessed {{ answer }} and scored <br/><strong>{{ scores.round.user }}</strong> points!
                 </div>
                 <div class="column has-text-centered">
                     {{ opponent.name }} scored <br/><strong>{{ opponent.score }}</strong> points!
@@ -36,7 +36,7 @@ export default {
   name: 'roundSummary',
   data () {
       return {
-          countdown: 5,
+          countdown: 8,
           countdown_newGame: process.env.NODE_ENV === 'production' ? 10 : 5,
           MAX_ROUNDS: process.env.NODE_ENV === 'production' ? 10 : 2
       }
@@ -93,6 +93,10 @@ export default {
         }
       },
       type: Object
+    },
+    answer: {
+      default: 0,
+      type: Number
     },
     round: {
       default: 0,
