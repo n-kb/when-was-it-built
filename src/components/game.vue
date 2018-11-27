@@ -100,7 +100,8 @@ export default {
       slider_options: {
         formatter:this.formatter,
         min: -600,
-        max:2019,
+        max:2020,
+        interval: 10,
         'tooltip-style':{'background-color': '#2d616f', 'border-color': '#2d616f'},
         'process-style':{'background-color': '#2d616f'}
       }
