@@ -69,7 +69,7 @@
 import roundSummary from './roundSummary.vue'
 import vueSlider from 'vue-slider-component'
 // 25 seconds per question
-const COUNTDOWN = process.env.NODE_ENV === 'production' ? 25 : 6
+const COUNTDOWN = process.env.NODE_ENV === 'production' ? 20 : 6
 
 export default {
   name: 'game',

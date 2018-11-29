@@ -38,7 +38,7 @@ export default {
       return {
           countdown: 8,
           countdown_newGame: process.env.NODE_ENV === 'production' ? 10 : 5,
-          MAX_ROUNDS: process.env.NODE_ENV === 'production' ? 10 : 2
+          MAX_ROUNDS: process.env.NODE_ENV === 'production' ? 8 : 2
       }
   },
   methods: {
